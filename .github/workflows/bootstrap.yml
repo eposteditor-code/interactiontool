@@ -1,7 +1,9 @@
 name: Bootstrap InteractionTool source
 
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - '.bootstrap/READY'
 
 permissions:
   contents: write
@@ -13,10 +15,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Unpack deploy-ready source
         run: |
-          base64 -d .interactiontool-source.b64 > /tmp/interactiontool.zip
+          cat .bootstrap/part* | base64 -d > /tmp/interactiontool.zip
           unzip -q /tmp/interactiontool.zip -d /tmp/interactiontool
           cp -a /tmp/interactiontool/interactiontool_nextjs_v1_6_deploy_ready/. .
-          rm -f .interactiontool-source.b64
+          rm -rf .bootstrap
           rm -f .github/workflows/bootstrap.yml
       - name: Commit source
         run: |
